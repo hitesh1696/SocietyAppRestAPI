@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -11,18 +12,26 @@ class UserController extends Controller
 {
     public function store_user(Request $request)
     {
-        // return $request->input('params.mobile');
-        $users = User::where('phone_number',$request->input('params.mobile'))->get();
+        // return $request;
+        $validator = Validator::make($request->all(),[
+            'params.mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:20',
+            'params.email' => 'required|email',
+            'params.name' => 'required|string',
+            'params.terms_conditions' => 'required|boolean',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        } else {
+            $users = User::where('phone_number',$request->input('params.mobile'))->get();
         if(isEmpty($users))
         {
             $user = User::create([
-                "name" => $request->input('params.name'),
-                "phone_number_country_code" => $request->input('params.country_code'),
-                "phone_number" => $request->input('params.mobile'),
-                "email" => $request->input('params.email'),
-                "terms_conditions" => $request->input('params.terms_conditions'),
+                "name" => $validator['params']['name'],
+                "phone_number_country_code" => $request->input('country_code'),
+                "phone_number" => $validator['params']['mobile'],
+                "email" => $validator['params']['email'],
+                "terms_conditions" => $validator['params']['terms_conditions'],
             ]);
-            // $msg = 
             return response()->json([
                 'flag' => 1,
                 'msg' => "Welcome To Dwebpixel Club " . $user->name,
@@ -35,6 +44,8 @@ class UserController extends Controller
             ]);
             
         }
+        }
+        
         // $email = $request->input('params.email');
         // return $request->params;
     }

@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         // return $request;
         $validator = Validator::make($request->all(),[
-            'params.mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:20',
+            'params.mobile' => 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:20',
             'params.email' => 'required|email',
             'params.name' => 'required|string',
             'params.terms_conditions' => 'required|boolean',

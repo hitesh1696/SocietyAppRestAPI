@@ -8,6 +8,8 @@ class UserController extends Controller
 {
     public function store_user(Request $request)
     {
-        return $request->params;
+        
+        $email = $request->input('params.email');
+        return $email;
     }
 }

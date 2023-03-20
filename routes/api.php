@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/check_mobile_number_is_valid', [UserController::class, 'check_mobile_number_is_valid']);
 Route::post('/store_user', [UserController::class, 'store_user']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

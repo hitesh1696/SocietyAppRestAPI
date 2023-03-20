@@ -10,6 +10,21 @@ use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
+    public function check_mobile_number_is_valid(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'params.mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:11',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        } else {
+            return response()->json([
+                'flag' => 1,
+                'msg' => "Mobile number is correct, move forward to next step ",
+            ]);
+
+        }
+    }
     public function store_user(Request $request)
     {
         // return $request;

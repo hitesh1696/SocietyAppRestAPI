@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
@@ -39,7 +38,7 @@ class UserController extends Controller
             'params.email.email' => 'The email should be valid email-id',
             'params.name' => 'The name is required',
         ]);
-        return 1;
+        
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()]);
         } else {

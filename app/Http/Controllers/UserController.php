@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Vonage\Client\Credentials\Basic;
+use Vonage\Client;
 
+use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
@@ -40,6 +43,7 @@ class UserController extends Controller
     }
     public function store_user(Request $request)
     {
+        // return '91'.$request->input('params.mobile');
         $validator = Validator::make($request->all(),[
             'params.email' => 'required|email',
             'params.name' => 'required|string',
@@ -54,30 +58,50 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()]);
         } else {
             $users = User::where('phone_number', $request->input('params.mobile'))->get();
-            if(!$users)
+            if(isEmpty($users))
             {
-                $user = User::create([
-                    "name" =>$request->input('params.name'),
-                    "phone_number_country_code" => $request->input('params.country_code'),
-                    "phone_number" => $request->input('params.mobile'),
-                    "email" =>$request->input('params.email'),
-                    "terms_conditions" =>$request->input('params.terms_conditions'),
-                ]);
+                $apiKey = "59ca944c";
+                $apiSecret = "kxptfKxsbQa2WHhr";
+                $otp = rand(000000, 999999);
+                $mobile = '91'.$request->input('params.mobile');
+                // return $users;
+                $client = new  Client(new Basic($apiKey, $apiSecret));
+                $response = $client->sms()->send(
+                    new \Vonage\SMS\Message\SMS($mobile, 'YOUR_VONAGE_PHONE_NUMBER', "Your OTP is: $otp")
+                );
+                $message = $response->current();
 
-                if($user)
-                {
-                    return response()->json([
-                        'flag' => 1,
-                        'msg' => "Welcome To Dwebpixel Club ",
-                        'errors' => null
+                if ($message->getStatus() == 0) {
+                    $user = User::create([
+                        "name" =>$request->input('params.name'),
+                        "phone_number_country_code" => $request->input('params.country_code'),
+                        "phone_number" => $request->input('params.mobile'),
+                        "email" =>$request->input('params.email'),
+                        "terms_conditions" =>$request->input('params.terms_conditions'),
+                        "otp" => $otp
                     ]);
-                } 
-                else {
+    
+                    if($user)
+                    {
+                        return response()->json([
+                            'flag' => 1,
+                            'msg' => "Welcome To Dwebpixel Club, OTP sent successfully",
+                            'errors' => null
+                        ]);
+                    } 
+                    else {
+                        return response()->json([
+                            'flag' => 1,
+                            'msg' => "Something went wrong ",
+                        ]);
+                    }
+                } else {
                     return response()->json([
                         'flag' => 1,
-                        'msg' => "Something went wrong ",
+                        'msg' => "The message failed with status: " . $message->getStatus() . "\n",
                     ]);
                 }
+                
                 
             }
             else {

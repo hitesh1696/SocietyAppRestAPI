@@ -20,11 +20,22 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()]);
         } else {
-            return response()->json([
-                'flag' => 1,
-                'msg' => "Mobile number is correct, move forward to next step ",
-            ]);
-
+            $users = User::where('phone_number', $request->input('params.mobile'))->get();
+            if(!$users)
+            {
+                return response()->json([
+                    'flag' => 1,
+                    'errors' =>  [
+                        'mobile' => "Mobile number is already exists ",
+                     ]
+                ]);
+            }
+            else {
+                return response()->json([
+                    'flag' => 1,
+                    'msg' => "Mobile number is correct, move forward to next step ",
+                ]);
+            }
         }
     }
     public function store_user(Request $request)

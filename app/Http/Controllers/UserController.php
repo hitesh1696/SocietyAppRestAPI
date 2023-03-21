@@ -43,7 +43,6 @@ class UserController extends Controller
     }
     public function store_user(Request $request)
     {
-        // return '91'.$request->input('params.mobile');
         $validator = Validator::make($request->all(),[
             'params.email' => 'required|email',
             'params.name' => 'required|string',
@@ -64,7 +63,6 @@ class UserController extends Controller
                 $apiSecret = "kxptfKxsbQa2WHhr";
                 $otp = rand(000000, 999999);
                 $mobile = '91'.$request->input('params.mobile');
-                // return $users;
                 $client = new  Client(new Basic($apiKey, $apiSecret));
                 $response = $client->sms()->send(
                     new \Vonage\SMS\Message\SMS($mobile, 'YOUR_VONAGE_PHONE_NUMBER', "Your OTP is: $otp")

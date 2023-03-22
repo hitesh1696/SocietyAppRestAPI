@@ -18,6 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('/check_mobile_number_is_valid', [UserController::class, 'check_mobile_number_is_valid']);
 Route::post('/store_user', [UserController::class, 'store_user']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
